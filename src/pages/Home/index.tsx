@@ -273,11 +273,26 @@ const VoiceAssistant = observer(() => {
   };
 
   const onTextSend = () => {
+    let text = chatBoxInput
     sendMessage({
       type: WebSocketMessageTypes.TEXT,
-      data: chatBoxInput,
+      data: text,
+    })
+    setChatHistory(prevHistory => {
+      const newMessage: ChatMessage = {
+        role: 'user',
+        content: text,
+        timestamp: Date.now()
+      };
+      const updatedHistory = [...prevHistory, newMessage];
+      localStorage.setItem('chatHistory', JSON.stringify(updatedHistory));
+      return updatedHistory;
     });
     setChatBoxInput('');
+  };
+
+  const onShowChatbox = () => {
+    setIsKeyboardOn(!isKeyboardOn);
   };
 
   useEffect(() => {
@@ -338,7 +353,7 @@ const VoiceAssistant = observer(() => {
         isListening={vad.listening}
         isVideoOn={isVideoOn}
         onToggleListening={vad.listening ? stopVAD : startVAD}
-        onShowChatbox={() => setIsKeyboardOn(!isKeyboardOn)}
+        onShowChatbox={onShowChatbox}
         onToggleVideo={() => setIsVideoOn(!isVideoOn)}
         onShowHistory={() => setShowHistory(true)}
         onLogout={handleLogout}
