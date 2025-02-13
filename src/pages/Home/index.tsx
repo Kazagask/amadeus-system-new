@@ -272,6 +272,14 @@ const VoiceAssistant = observer(() => {
     }
   };
 
+  const onTextSend = () => {
+    sendMessage({
+      type: WebSocketMessageTypes.TEXT,
+      data: chatBoxInput,
+    });
+    setChatBoxInput('');
+  };
+
   useEffect(() => {
     const savedUsername = localStorage.getItem('amadeus_username');
     const savedConfig = localStorage.getItem('live2d_config');
@@ -315,13 +323,13 @@ const VoiceAssistant = observer(() => {
         <div className={styles.chatBox}>
           <Input
             type="string"
-            style={{ width: "calc(100% - 20px)" }}
+            style={{ width: "calc(100% - 40px)" }}
             value={chatBoxInput}
             onChange={e => setChatBoxInput(e.target.value)}
             className="col-span-3"
           />
-          <Button>
-            <Send className="h-6 w-6" onClick={() => sendMessage({ type: WebSocketMessageTypes.TEXT, data: chatBoxInput })} />
+          <Button onClick={onTextSend} >
+            <Send className="h-6 w-6"/>
           </Button>
         </div>
       }

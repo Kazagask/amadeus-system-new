@@ -30,6 +30,10 @@ export function useWebSocket({ url, onMessage, onOpen, onClose, onError }: UseWe
     }
 
     return new Promise<WebSocket>((resolve) => {
+      if(import.meta.env.MODE  === 'development'){
+        console.log("development env")
+        url = `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//localhost:3002`
+      }
       const wsUrl = new URL(url)
       wsUrl.searchParams.append('token', import.meta.env.VITE_AUTH_API_TOKEN)
       const ws = new WebSocket(wsUrl)
