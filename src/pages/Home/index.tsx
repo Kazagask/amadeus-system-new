@@ -15,6 +15,9 @@ import Toolbar from '@/components/Toolbar'
 import LoginOverlay from '@/components/LoginOverlay'
 import ConfigPanel from '@/components/ConfigPanel'
 import StartDialog from '@/components/StartDialog'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Send } from 'lucide-react'
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -45,6 +48,7 @@ const VoiceAssistant = observer(() => {
   const [isSpeaking, setIsSpeaking] = useState(false)
   const [showOverlay, setShowOverlay] = useState(true)
   const { live2dStore } = useStore();
+  const [isKeyboardOn, setIsKeyboardOn] = useState(false)
   const [isVideoOn, setIsVideoOn] = useState(false)
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [showHistory, setShowHistory] = useState(false);
@@ -54,6 +58,7 @@ const VoiceAssistant = observer(() => {
   const [showConfig, setShowConfig] = useState(false);
   const [isFirstLogin, setIsFirstLogin] = useState(false);
   const [showStartDialog, setShowStartDialog] = useState(false);
+  const [chatBoxInput, setChatBoxInput] = useState<string>('');
 
   const handleWebSocketMessage = useRef((message: WebSocketMessage) => {
     console.log('收到消息类型:', message.type)
@@ -127,6 +132,8 @@ const VoiceAssistant = observer(() => {
     url: `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}`,
     onMessage: handleWebSocketMessage
   })
+
+  
 
   const startSpeech = () => {
     setPrevAiResponse("")
@@ -304,10 +311,26 @@ const VoiceAssistant = observer(() => {
           )}
         </div>
       </div>
+      {isKeyboardOn &&
+        <div className={styles.chatBox}>
+          <Input
+            type="string"
+            style={{ width: "calc(100% - 20px)" }}
+            value={chatBoxInput}
+            onChange={e => setChatBoxInput(e.target.value)}
+            className="col-span-3"
+          />
+          <Button>
+            <Send className="h-6 w-6" onClick={() => sendMessage({ type: WebSocketMessageTypes.TEXT, data: chatBoxInput })} />
+          </Button>
+        </div>
+      }
       <Toolbar
+        isKeyboardOn={isKeyboardOn}
         isListening={vad.listening}
         isVideoOn={isVideoOn}
         onToggleListening={vad.listening ? stopVAD : startVAD}
+        onShowChatbox={() => setIsKeyboardOn(!isKeyboardOn)}
         onToggleVideo={() => setIsVideoOn(!isVideoOn)}
         onShowHistory={() => setShowHistory(true)}
         onLogout={handleLogout}

@@ -1,10 +1,12 @@
 import { Button } from '@/components/ui/button'
-import { Mic, MicOff, Video, VideoOff, History, LogOut, Settings } from 'lucide-react'
+import { Keyboard, KeyboardOff, Mic, MicOff, Video, VideoOff, History, LogOut, Settings } from 'lucide-react'
 import styles from './index.module.less'
 
 interface ToolbarProps {
+  isKeyboardOn: boolean;
   isListening: boolean;
   isVideoOn: boolean;
+  onShowChatbox: () => void;
   onToggleListening: () => void;
   onToggleVideo: () => void;
   onShowHistory: () => void;
@@ -12,12 +14,18 @@ interface ToolbarProps {
   onShowConfig: () => void;
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({ isListening, isVideoOn, onToggleListening, onToggleVideo, onShowHistory, onLogout, onShowConfig }) => {
+const Toolbar: React.FC<ToolbarProps> = ({ isKeyboardOn, isListening, isVideoOn,onShowChatbox, onToggleListening, onToggleVideo, onShowHistory, onLogout, onShowConfig }) => {
   return (
     <div className={styles.toolbar}>
       <Button
-        onClick={onToggleListening}
+        onClick={onShowChatbox}
         variant="ghost"
+        title={isKeyboardOn ? "关闭键盘" : "开启键盘"}
+      >
+        {isKeyboardOn ? <KeyboardOff className="h-6 w-6" /> : <Keyboard className="h-6 w-6" />}
+      </Button>
+      <Button
+        onClick={onToggleListening}
         title={isListening ? "闭麦" : "开麦"}
       >
         {isListening ? <MicOff className="h-6 w-6" /> : <Mic className="h-6 w-6" />}

@@ -69,6 +69,11 @@ export function setupWebSocket(server: http.Server) {
             ws.chatService.handleChat(JSON.stringify(selfMotivatedMessage), ws)
             break
           }
+          case WebSocketMessageTypes.TEXT: {
+            const text = parsedMessage.data as string
+            await ws.chatService.handleChat(text, ws)
+            break
+          }
           case WebSocketMessageTypes.START_SPEECH: {
             ws.isRecording = true
             ws.audioChunks = []
